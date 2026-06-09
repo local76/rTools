@@ -12,7 +12,6 @@
 #   ├── trance/
 #   ├── pulse/
 #   ├── ignite/
-#   ├── template/
 #   └── scout/
 #
 # All paths are derived from $PSScriptRoot's parent's parent, so the
@@ -45,7 +44,7 @@ function Invoke-Step {
 }
 
 $buildFlag = if ($Release) { "--release" } else { "" }
-$apps = @("helm", "trance", "pulse", "ignite", "template", "scout")
+$apps = @("helm", "trance", "pulse", "ignite", "scout")
 $total = ($apps.Count) + 2  # +2 for library + screensavers
 $step = 0
 
@@ -59,11 +58,7 @@ if (-not $SkipCommon) {
 if (-not $SkipApps) {
     foreach ($app in $apps) {
         $step++
-        $script = if (Test-Path "$local76/$app/build_all.ps1") {
-            { & "$local76/$app/build_all.ps1" }
-        } else {
-            { cargo build $buildFlag }
-        }
+        $script = { cargo build $buildFlag }
         Invoke-Step $step $total $app "$local76/$app" $script
     }
 }

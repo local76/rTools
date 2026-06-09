@@ -5,8 +5,8 @@
 # v<version> tag, and pushes. Idempotent — safe to re-run.
 #
 # Repos covered:
-#   library, screensavers, helm, trance, pulse, ignite, template,
-#   scout, apps, toolkit
+#   library, screensavers, helm, trance, pulse, ignite,
+#   scout, toolkit
 #
 # (The two umbrella repos apps + toolkit are versioned off their
 # README.md "Initial commit" — no Cargo.toml — so this script reads
@@ -18,7 +18,7 @@ Write-Host "local76 root: $local76" -ForegroundColor Cyan
 
 $repos = @(
     "library", "screensavers", "helm", "trance", "pulse",
-    "ignite", "template", "scout", "apps", "toolkit"
+    "ignite", "scout", "toolkit"
 )
 
 function Get-Repo-Version {
@@ -77,4 +77,4 @@ foreach ($repo in $repos) {
     }
 }
 
-Write-Host "`nAll 10 repos tagged + pushed." -ForegroundColor Green
+Write-Host "`nAll 8 repos tagged + pushed." -ForegroundColor Green
