@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2026.06.09] - 2026-06-09
+## [2026.6.9] - 2026-06-09
 
 ### Renamed
 - **Project rename**: `toolkit` was previously `rTools`. The repo name, the script file names, and the docs are now lowercase `toolkit`. Behavior and scripts are unchanged.
