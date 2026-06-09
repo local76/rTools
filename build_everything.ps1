@@ -1,19 +1,19 @@
-# build_everything.ps1 — build all rApps + rScenes + rCommon in the right dependency order
+# build_everything.ps1 — build all apps + screensavers + library in the right dependency order
 #
-# Run from the local76/ root (this script is the one in rTools/ but the
+# Run from the local76/ root (this script is the one in toolkit/ but the
 # canonical "build all" entry point is the symlink/copy in the local76/
 # root, which the user invokes).
 #
 # This script assumes the standard sibling layout:
 #   local76/
-#   ├── rCommon/   (the shared design system + 10 screensaver effects)
-#   ├── rScenes/   (the 10 standalone screensaver shim binaries)
-#   ├── rFetch/
-#   ├── rIdle/
-#   ├── rMonitor/
-#   ├── rStartup/
-#   ├── rTemplate/
-#   └── rWifi/
+#   ├── library/   (the shared design system + 10 screensaver effects)
+#   ├── screensavers/   (the 10 standalone screensaver shim binaries)
+#   ├── helm/
+#   ├── trance/
+#   ├── pulse/
+#   ├── ignite/
+#   ├── template/
+#   └── scout/
 #
 # All paths are derived from $PSScriptRoot's parent's parent, so the
 # script works regardless of which directory the user invokes it from.
@@ -45,13 +45,13 @@ function Invoke-Step {
 }
 
 $buildFlag = if ($Release) { "--release" } else { "" }
-$apps = @("rFetch", "rIdle", "rMonitor", "rStartup", "rTemplate", "rWifi")
-$total = ($apps.Count) + 2  # +2 for rCommon + rScenes
+$apps = @("helm", "trance", "pulse", "ignite", "template", "scout")
+$total = ($apps.Count) + 2  # +2 for library + screensavers
 $step = 0
 
 if (-not $SkipCommon) {
     $step++
-    Invoke-Step $step $total "rCommon" "$local76/rCommon" {
+    Invoke-Step $step $total "library" "$local76/library" {
         cargo build $buildFlag
     }
 }
@@ -70,7 +70,7 @@ if (-not $SkipApps) {
 
 if (-not $SkipScenes) {
     $step++
-    Invoke-Step $step $total "rScenes (10 screensaver shims)" "$local76/rScenes" {
+    Invoke-Step $step $total "screensavers (10 screensaver shims)" "$local76/screensavers" {
         cargo build --workspace $buildFlag
     }
 }

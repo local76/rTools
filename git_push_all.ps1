@@ -5,10 +5,10 @@
 # v<version> tag, and pushes. Idempotent — safe to re-run.
 #
 # Repos covered:
-#   rCommon, rScenes, rFetch, rIdle, rMonitor, rStartup, rTemplate,
-#   rWifi, rApps, rTools
+#   library, screensavers, helm, trance, pulse, ignite, template,
+#   scout, apps, toolkit
 #
-# (The two umbrella repos rApps + rTools are versioned off their
+# (The two umbrella repos apps + toolkit are versioned off their
 # README.md "Initial commit" — no Cargo.toml — so this script reads
 # their version from the most-recent annotated tag instead.)
 
@@ -17,8 +17,8 @@ $local76 = (Resolve-Path "$PSScriptRoot/../..").Path
 Write-Host "local76 root: $local76" -ForegroundColor Cyan
 
 $repos = @(
-    "rCommon", "rScenes", "rFetch", "rIdle", "rMonitor",
-    "rStartup", "rTemplate", "rWifi", "rApps", "rTools"
+    "library", "screensavers", "helm", "trance", "pulse",
+    "ignite", "template", "scout", "apps", "toolkit"
 )
 
 function Get-Repo-Version {
@@ -26,7 +26,7 @@ function Get-Repo-Version {
     Push-Location $Path
     try {
         # Try Cargo.toml version first (handles both single-crate and
-        # workspace layouts, but the rApps/rTools umbrellas don't
+        # workspace layouts, but the apps/toolkit umbrellas don't
         # have a Cargo.toml).
         $candidates = @("Cargo.toml", "crates/*/Cargo.toml")
         foreach ($c in $candidates) {
