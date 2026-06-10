@@ -84,7 +84,9 @@ foreach ($a in $targets) {
         $assets = Get-ChildItem -Path $binDir -File
         if ($assets) {
             $assetPaths = $assets | ForEach-Object { $_.FullName }
-            gh release create "v$Version" @assetPaths --title "$a v$Version" --generate-notes --draft:$Draft
+            $ghArgs = @('release','create',"v$Version") + $assetPaths + @('--title',"$a v$Version",'--generate-notes')
+            if ($Draft) { $ghArgs += '--draft' }
+            & gh @ghArgs
         } else {
             Write-Host "  (no assets found in $binDir)" -ForegroundColor Yellow
         }
