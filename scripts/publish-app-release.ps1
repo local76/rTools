@@ -19,7 +19,11 @@ if (-not $Version) {
 }
 
 $monorepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$apps = @("helm", "pulse", "scout", "trance", "ignite", "screensavers")
+$apps = @(
+    "helm", "pulse", "scout", "trance", "ignite",
+    "beams", "bounce", "bursts", "chaos", "cosmos", "disco", "flame", "glyphs", "gnats", "storm",
+    "screensavers"
+)
 
 if ($All) {
     $targets = $apps
@@ -35,7 +39,13 @@ if ($All) {
 }
 
 foreach ($a in $targets) {
-    $appPath = Join-Path $monorepoRoot $a
+    $appPath = Join-Path $monorepoRoot "app-$a"
+    if (-not (Test-Path $appPath)) {
+        $appPath = Join-Path $monorepoRoot "screensavers-$a"
+    }
+    if (-not (Test-Path $appPath)) {
+        $appPath = Join-Path $monorepoRoot $a
+    }
     Write-Host "=== Releasing $a $Version ===" -ForegroundColor Cyan
     Push-Location $appPath
     try {
@@ -51,7 +61,8 @@ foreach ($a in $targets) {
         Copy-Item -Path "target\release\$a" -Destination $binDir -Force -ErrorAction SilentlyContinue
 
         # For screensavers, also copy .scr files
-        if ($a -eq "screensavers") {
+        $isScreensaver = ($a -eq "screensavers" -or $a -in @('beams', 'bounce', 'bursts', 'chaos', 'cosmos', 'disco', 'flame', 'glyphs', 'gnats', 'storm'))
+        if ($isScreensaver) {
             Get-ChildItem -Path "target\release" -Filter "*.exe" | ForEach-Object {
                 $base = $_.BaseName
                 Copy-Item -Path $_.FullName -Destination (Join-Path $binDir "$base.scr") -Force

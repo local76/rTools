@@ -15,7 +15,10 @@ param(
 $ErrorActionPreference = "Stop"
 
 $monorepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$appPath = Join-Path $monorepoRoot $App
+$appPath = Join-Path $monorepoRoot "app-$App"
+if (-not (Test-Path $appPath)) {
+    $appPath = Join-Path $monorepoRoot $App
+}
 
 if (-not (Test-Path $appPath)) {
     Write-Host "Error: App path not found: $appPath" -ForegroundColor Red

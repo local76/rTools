@@ -13,12 +13,21 @@ param(
 
     [string[]]$Repos = @(
         "library",
-        "screensavers",
-        "helm",
-        "pulse",
-        "scout",
-        "trance",
-        "ignite",
+        "app-helm",
+        "app-pulse",
+        "app-scout",
+        "app-trance",
+        "app-ignite",
+        "screensavers-beams",
+        "screensavers-bounce",
+        "screensavers-bursts",
+        "screensavers-chaos",
+        "screensavers-cosmos",
+        "screensavers-disco",
+        "screensavers-flame",
+        "screensavers-glyphs",
+        "screensavers-gnats",
+        "screensavers-storm",
         "toolkit",
         "local76"
     ),
@@ -84,6 +93,13 @@ function Push-Tag-One {
 
 foreach ($r in $Repos) {
     $path = Join-Path $monorepoRoot $r
+    if (-not (Test-Path $path)) {
+        if ($r -match "^(helm|pulse|scout|trance|ignite)$") {
+            $path = Join-Path $monorepoRoot "app-$r"
+        } elseif ($r -match "^(beams|bounce|bursts|chaos|cosmos|disco|flame|glyphs|gnats|storm)$") {
+            $path = Join-Path $monorepoRoot "screensavers-$r"
+        }
+    }
     Push-Tag-One -Path $path -Name $r -Tag $Tag -Message $Message -DryRun $DryRun
 }
 

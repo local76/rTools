@@ -2,7 +2,7 @@
 # rc.exe (Windows SDK) mis-handles PNG-compressed entries, so a BMP-only ICO is
 # the documented workaround.
 
-param([string]$ScreensaversRoot = 'C:\Users\jeryd\Synology\Home\Projects\local76\screensavers')
+param([string]$MonorepoRoot = 'C:\Users\jeryd\Synology\Home\Projects\local76')
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.Drawing
 
@@ -110,7 +110,11 @@ function Reencode-Ico {
 
 $results = @()
 foreach ($s in $scenes) {
-    $ico = Join-Path $ScreensaversRoot "src\effects\$s\assets\icon.ico"
+    $ico = Join-Path $MonorepoRoot "screensavers-$s\assets\scene-$s.ico"
+    if (-not (Test-Path $ico)) {
+        # Fallback to old path
+        $ico = Join-Path $MonorepoRoot "screensavers\src\effects\$s\assets\icon.ico"
+    }
     $out = Join-Path $work "$s.ico"
     Reencode-Ico -IcoPath $ico -OutPath $out
     $results += [PSCustomObject]@{Scene=$s; SourceSize=(Get-Item $ico).Length; NewSize=(Get-Item $out).Length}

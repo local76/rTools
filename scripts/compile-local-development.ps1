@@ -16,8 +16,8 @@ $buildFlag = if ($Release) { "--release" } else { "" }
 # toolkit/ lives at <monorepo>/toolkit. The sibling repos are in the same monorepo root.
 $monorepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $libPath    = Join-Path $monorepoRoot "library"
-$screensPath = Join-Path $monorepoRoot "screensavers"
 $apps = @("helm", "pulse", "scout", "trance", "ignite")
+$screens = @("beams", "bounce", "bursts", "chaos", "cosmos", "disco", "flame", "glyphs", "gnats", "storm")
 
 function Build-One {
     param([string]$Path, [string]$Name)
@@ -40,15 +40,23 @@ if (-not $SkipLibrary) {
 
 # 2. screensavers (10 effect binaries — depend on library)
 if (-not $SkipScreensavers) {
-    Build-One $screensPath "screensavers"
+    foreach ($s in $screens) {
+        $path = Join-Path $monorepoRoot "screensavers-$s"
+        if (Test-Path $path) {
+            Build-One $path "screensavers-$s"
+        }
+    }
 }
 
 # 3. The 5 TUI apps
 if (-not $SkipApps) {
     foreach ($a in $apps) {
-        $path = Join-Path $monorepoRoot $a
+        $path = Join-Path $monorepoRoot "app-$a"
+        if (-not (Test-Path $path)) {
+            $path = Join-Path $monorepoRoot $a
+        }
         if (Test-Path $path) {
-            Build-One $path $a
+            Build-One $path "app-$a"
         }
     }
 }
