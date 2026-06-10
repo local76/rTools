@@ -10,9 +10,11 @@ No Rust code. No GitHub Actions. No CI. Every binary in the local76 ecosystem is
 
 | Script | What it does |
 |---|---|
-| `scripts/build.ps1` | Builds every repo in dependency order: `library` → `screensavers` → the 5 apps. Supports `-SkipLibrary`, `-SkipScreensavers`, `-SkipApps`, `-Release`, `-App <name>`. |
-| `scripts/release.ps1` | Cuts a release for one app or all (`-All`): builds release, copies to `dist/binaries/`, commits, tags `v$Version`, pushes, creates a draft GitHub Release with all artifacts attached. |
-| `scripts/push_all.ps1` | Tags + pushes a release tag across the whole ecosystem. Idempotent: skips repos that already have the tag. |
+| `scripts/compile-local-development.ps1` | Builds every repo in dependency order: `library` → `screensavers` → the 5 apps. |
+| `scripts/publish-app-release.ps1` | Cuts a release for one app or all: compiles release binary, copies to `dist/binaries/`, tags version, pushes to GitHub, and creates a draft GitHub Release. |
+| `scripts/push-uniform-git-tag.ps1` | Tags and pushes a user-specified tag across the whole ecosystem (idempotent). |
+| `scripts/build-msi-installer.ps1` | Compiles a Windows MSI installer for the app using cargo-wix and WiX Toolset. |
+| `scripts/generate-winget-manifest.ps1` | Generates a singleton YAML manifest for submitting the app to the Windows Package Manager (WinGet). |
 
 ---
 
@@ -21,21 +23,20 @@ No Rust code. No GitHub Actions. No CI. Every binary in the local76 ecosystem is
 From the monorepo root (`C:\Users\jeryd\Synology\Home\Projects\local76` on Windows, `~/Synology/Home/Projects/local76` on Linux):
 
 ```pwsh
-# Build everything
-pwsh ./toolkit/scripts/build.ps1
+# Build everything locally
+pwsh ./toolkit/scripts/compile-local-development.ps1
 
-# Build a single app
-pwsh ./toolkit/scripts/build.ps1 -SkipLibrary -SkipScreensavers -App helm
+# Build a single app locally
+pwsh ./toolkit/scripts/compile-local-development.ps1 -SkipLibrary -SkipScreensavers -App helm
 
-# Build release binaries for all 5 apps
-pwsh ./toolkit/scripts/build.ps1 -SkipLibrary -SkipScreensavers -Release
+# Package Windows MSI installer
+pwsh ./toolkit/scripts/build-msi-installer.ps1 -App helm -Version 2026.6.9
+
+# Generate WinGet manifest for MSI
+pwsh ./toolkit/scripts/generate-winget-manifest.ps1 -App helm -Version 2026.6.9 -MsiPath ./helm/dist/binaries/helm_v2026.6.9_x64.msi
 
 # Cut a release
-pwsh ./toolkit/scripts/release.ps1 -App helm -Version 3.0.26
-pwsh ./toolkit/scripts/release.ps1 -All -Version 1.0.0
-
-# Push a tag across all 9 repos (idempotent)
-pwsh ./toolkit/scripts/push_all.ps1 -Tag v1.0.0
+pwsh ./toolkit/scripts/publish-app-release.ps1 -App helm -Version 2026.6.9
 ```
 
 ---
@@ -46,14 +47,20 @@ pwsh ./toolkit/scripts/push_all.ps1 -Tag v1.0.0
 toolkit/
 ├── README.md
 ├── LICENSE.md
+├── build-all-local.ps1                       # Root quick-build helper
+├── tag-each-repo-with-crate-version.ps1      # Root version tag helper
 ├── scripts/
-│   ├── build.ps1
-│   ├── release.ps1
-│   └── push_all.ps1
+│   ├── compile-local-development.ps1
+│   ├── publish-app-release.ps1
+│   ├── push-uniform-git-tag.ps1
+│   ├── build-msi-installer.ps1
+│   └── generate-winget-manifest.ps1
 └── packaging/
-    ├── deb/        (empty — cargo deb reads metadata from Cargo.toml)
-    ├── rpm/        (empty — cargo generate-rpm reads metadata from Cargo.toml)
-    └── desktop/    (empty — desktop entry templates are in each app repo)
+    ├── msi/            # WiX configuration templates
+    ├── winget/         # Generated WinGet YAML manifests
+    ├── deb/            # Empty (cargo deb reads metadata from Cargo.toml)
+    ├── rpm/            # Empty (cargo generate-rpm reads metadata from Cargo.toml)
+    └── desktop/        # Empty (desktop templates are in each app repo)
 ```
 
 `packaging/` is intentionally empty. Each app's `Cargo.toml` carries the `[package.metadata.deb]` and `[package.metadata.generate-rpm]` metadata; `cargo deb` and `cargo generate-rpm` read it directly. The `.desktop` entries live in each app's `assets/` directory.

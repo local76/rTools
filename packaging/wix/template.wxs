@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- Dynamic template populated by build-msi.ps1 -->
+  <Product Id="*" 
+           Name="{{AppName}}" 
+           Language="1033" 
+           Version="{{AppVersion}}" 
+           Manufacturer="local76" 
+           UpgradeCode="45e3cda2-2b36-4d1a-8fe8-3f4da3108c90">
+
+    <Package InstallerVersion="301" 
+             Compressed="yes" 
+             InstallScope="perUser" 
+             InstallPrivileges="limited" />
+
+    <MajorUpgrade Schedule="afterInstallInitialize" 
+                  DowngradeErrorMessage="A newer version of {{AppName}} is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Registry key to mark installation scope for Add/Remove Programs -->
+    <Property Id="MSIINSTALLPERUSER" Value="1" />
+    <Property Id="ALLUSERS" Value="2" />
+
+    <!-- Application Icon -->
+    <Icon Id="AppIcon" SourceFile="stage\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <!-- Customize Branding Graphics -->
+    <!--{{DialogBmp}}-->
+    <!--{{BannerBmp}}-->
+
+    <!-- Directory Structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- User Local AppData Folder -->
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="SuiteDir" Name="local76">
+          <Directory Id="APPLICATIONROOTDIRECTORY" Name="{{AppName}}">
+            <Directory Id="ScreensaversDir" Name="screensavers" />
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <!-- Start Menu Shortcuts -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="SuiteStartMenuDir" Name="local76" />
+      </Directory>
+
+      <!-- Desktop Folder -->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <!-- Component Group for Screensaver binaries -->
+    <ComponentGroup Id="ScreensaverBinaries">
+      <!--{{ScreensaversComponents}}-->
+    </ComponentGroup>
+
+    <!-- Core Application Components -->
+    <DirectoryRef Id="APPLICATIONROOTDIRECTORY">
+      <Component Id="MainExecutable" Guid="*">
+        <!-- Main Executable File -->
+        <File Id="MainExe" Source="stage\{{ExecutableName}}" KeyPath="yes" />
+
+        <!-- User Start Menu Shortcut -->
+        <Shortcut Id="StartMenuShortcut"
+                  Directory="SuiteStartMenuDir"
+                  Name="{{AppName}}"
+                  WorkingDirectory="APPLICATIONROOTDIRECTORY"
+                  Icon="AppIcon"
+                  Advertise="yes" />
+
+        <!-- User Desktop Shortcut -->
+        <Shortcut Id="DesktopShortcut"
+                  Directory="DesktopFolder"
+                  Name="{{AppName}}"
+                  WorkingDirectory="APPLICATIONROOTDIRECTORY"
+                  Icon="AppIcon"
+                  Advertise="yes" />
+      </Component>
+
+      <!-- Registry key needed to make per-user shortcut validation compile safely -->
+      <Component Id="RegistryEntries" Guid="*">
+        <RegistryValue Root="HKCU" Key="Software\local76\{{AppName}}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        <!-- Remove start menu folder on uninstall -->
+        <RemoveFolder Id="RemoveSuiteStartMenuDir" Directory="SuiteStartMenuDir" On="uninstall" />
+        <RemoveFolder Id="RemoveAppRoot" Directory="APPLICATIONROOTDIRECTORY" On="uninstall" />
+        <RemoveFolder Id="RemoveSuiteDir" Directory="SuiteDir" On="uninstall" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- Feature Tree mapping -->
+    <Feature Id="MainApplication" Title="Core Application" Level="1" Description="Installs the main {{AppName}} application and shortcuts." TypicalDefault="install" Display="expand">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="RegistryEntries" />
+      
+      <!-- Option (defaults to ON via Level=1) to include screensaver binaries -->
+      <!--{{ScreensaversFeature}}-->
+    </Feature>
+
+    <!-- UI Selection Mode (Features customization dialog) -->
+    <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONROOTDIRECTORY" />
+    <UIRef Id="WixUI_FeatureTree" />
+  </Product>
+</Wix>
