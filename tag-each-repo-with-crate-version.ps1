@@ -66,8 +66,9 @@ foreach ($repo in $repos) {
         } else {
             Write-Host "  Tag $tag already exists, skipping" -ForegroundColor DarkGray
         }
-        # Push main + tag (idempotent)
-        git push origin main --follow-tags
+        # Push current branch + tag (idempotent)
+        $branch = (git branch --show-current).Trim()
+        git push origin $branch --follow-tags
         if ($LASTEXITCODE -ne 0) {
             throw "Push failed for $repo"
         }

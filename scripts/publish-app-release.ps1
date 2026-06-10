@@ -65,7 +65,8 @@ foreach ($a in $targets) {
             git commit -m "release: $a $Version"
         }
         git tag -a "v$Version" -m "$a v$Version" 2>$null
-        git push origin main --follow-tags
+        $branch = (git branch --show-current).Trim()
+        git push origin $branch --follow-tags
         if ($LASTEXITCODE -ne 0) { throw "push failed" }
 
         # Create GitHub release
