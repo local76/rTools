@@ -37,7 +37,7 @@ $descMap = @{
 
 $mapped = $descMap[$App]
 if (-not $mapped) {
-    $mapped = @("Terminal TUI utility from local76.", "terminal", "tui")
+    $mapped = @("Terminal UI utility from local76.", "terminal", "ui")
 }
 
 $description = $mapped[0]

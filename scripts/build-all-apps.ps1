@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 # toolkit/scripts/build-all-apps.ps1
-# Orchestrates compiling all 5 TUI applications (helm, pulse, scout, trance, ignite)
+# Orchestrates compiling all 5 UI applications (helm, pulse, scout, trance, ignite)
 # in the local76 monorepo.
 #
 # Usage:
@@ -22,7 +22,7 @@ if ($Release) {
 }
 
 Write-Host "==========================================" -ForegroundColor Green
-Write-Host "Building all 5 TUI apps (Release=$Release)" -ForegroundColor Green
+Write-Host "Building all 5 UI apps (Release=$Release)" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green
 
 $step = 0
@@ -65,7 +65,7 @@ foreach ($app in $apps) {
 
 Write-Host "`n==========================================" -ForegroundColor Green
 if ($failed.Count -eq 0) {
-    Write-Host "All 5 TUI apps compiled successfully!" -ForegroundColor Green
+    Write-Host "All 5 UI apps compiled successfully!" -ForegroundColor Green
     Write-Host "==========================================" -ForegroundColor Green
     exit 0
 } else {

@@ -48,7 +48,7 @@ if (-not $SkipScreensavers) {
     }
 }
 
-# 3. The 5 TUI apps
+# 3. The 5 UI apps
 if (-not $SkipApps) {
     foreach ($a in $apps) {
         $path = Join-Path $monorepoRoot "app-$a"

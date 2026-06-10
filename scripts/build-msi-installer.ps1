@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 # toolkit/scripts/build-msi-installer.ps1
-# Automates the generation of WiX MSI installers for local76 TUI applications.
+# Automates the generation of WiX MSI installers for local76 UI applications.
 # Requires: WiX Toolset (candle/light in PATH) and cargo-wix cargo subcommand.
 # Usage: pwsh ./toolkit/scripts/build-msi-installer.ps1 -App helm -Version 2026.6.9
 
