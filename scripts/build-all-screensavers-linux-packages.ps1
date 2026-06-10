@@ -25,14 +25,14 @@ $screensavers | ForEach-Object -ThrottleLimit 4 -Parallel {
     $outputDir = $using:outputDir
     $monorepoRoot = $using:monorepoRoot
 
-    $dir = Join-Path $monorepoRoot "screensavers-$saver"
+    $dir = Join-Path $monorepoRoot "screensaver-$saver"
     if (Test-Path $dir) {
-        Write-Host "-> Building DEB for screensavers-$saver..." -ForegroundColor Gray
+        Write-Host "-> Building DEB for screensaver-$saver..." -ForegroundColor Gray
         $process = Start-Process -FilePath "cargo" -ArgumentList "deb", "-o", $outputDir -WorkingDirectory $dir -NoNewWindow -PassThru -Wait
         if ($process.ExitCode -ne 0) {
-            Write-Error "Failed to build DEB package for screensavers-$saver (Exit Code: $($process.ExitCode))"
+            Write-Error "Failed to build DEB package for screensaver-$saver (Exit Code: $($process.ExitCode))"
         } else {
-            Write-Host "-> Completed DEB for screensavers-$saver!" -ForegroundColor Green
+            Write-Host "-> Completed DEB for screensaver-$saver!" -ForegroundColor Green
         }
     }
 }

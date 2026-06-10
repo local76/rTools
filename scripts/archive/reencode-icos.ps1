@@ -110,7 +110,7 @@ function Reencode-Ico {
 
 $results = @()
 foreach ($s in $scenes) {
-    $ico = Join-Path $MonorepoRoot "screensavers-$s\assets\scene-$s.ico"
+    $ico = Join-Path $MonorepoRoot "screensaver-$s\assets\scene-$s.ico"
     if (-not (Test-Path $ico)) {
         # Fallback to old path
         $ico = Join-Path $MonorepoRoot "screensavers\src\effects\$s\assets\icon.ico"

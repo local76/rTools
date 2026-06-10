@@ -18,16 +18,16 @@ param(
         "app-scout",
         "app-trance",
         "app-ignite",
-        "screensavers-beams",
-        "screensavers-bounce",
-        "screensavers-bursts",
-        "screensavers-chaos",
-        "screensavers-cosmos",
-        "screensavers-disco",
-        "screensavers-flame",
-        "screensavers-glyphs",
-        "screensavers-gnats",
-        "screensavers-storm",
+        "screensaver-beams",
+        "screensaver-bounce",
+        "screensaver-bursts",
+        "screensaver-chaos",
+        "screensaver-cosmos",
+        "screensaver-disco",
+        "screensaver-flame",
+        "screensaver-glyphs",
+        "screensaver-gnats",
+        "screensaver-storm",
         "toolkit",
         "local76"
     ),
@@ -97,7 +97,7 @@ foreach ($r in $Repos) {
         if ($r -match "^(helm|pulse|scout|trance|ignite)$") {
             $path = Join-Path $monorepoRoot "app-$r"
         } elseif ($r -match "^(beams|bounce|bursts|chaos|cosmos|disco|flame|glyphs|gnats|storm)$") {
-            $path = Join-Path $monorepoRoot "screensavers-$r"
+            $path = Join-Path $monorepoRoot "screensaver-$r"
         }
     }
     Push-Tag-One -Path $path -Name $r -Tag $Tag -Message $Message -DryRun $DryRun

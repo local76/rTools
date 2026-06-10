@@ -77,8 +77,8 @@ if (-not $SkipScenes) {
     foreach ($s in $screens) {
         $step++
         $script = { cargo build @buildArgs }
-        $sPath = "$local76/screensavers-$s"
-        Invoke-Step $step $total "screensavers-$s" $sPath $script
+        $sPath = "$local76/screensaver-$s"
+        Invoke-Step $step $total "screensaver-$s" $sPath $script
     }
 }
 

@@ -29,8 +29,8 @@ $classMap = @{
 }
 
 foreach ($s in $screens) {
-    Write-Host "`nProcessing screensavers-$s..." -ForegroundColor Yellow
-    $repoPath = "$local76/screensavers-$s"
+    Write-Host "`nProcessing screensaver-$s..." -ForegroundColor Yellow
+    $repoPath = "$local76/screensaver-$s"
     if (-not (Test-Path $repoPath)) {
         Write-Host "Warning: directory $repoPath not found, skipping." -ForegroundColor Red
         continue;

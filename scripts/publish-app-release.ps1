@@ -41,7 +41,7 @@ if ($All) {
 foreach ($a in $targets) {
     $appPath = Join-Path $monorepoRoot "app-$a"
     if (-not (Test-Path $appPath)) {
-        $appPath = Join-Path $monorepoRoot "screensavers-$a"
+        $appPath = Join-Path $monorepoRoot "screensaver-$a"
     }
     if (-not (Test-Path $appPath)) {
         $appPath = Join-Path $monorepoRoot $a

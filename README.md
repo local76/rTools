@@ -21,7 +21,7 @@ No Rust code. No GitHub Actions. No CI. Every binary in the local76 ecosystem is
 
 | Script | What it does |
 |---|---|
-| `scripts/compile-local-development.ps1` | Builds every repo in dependency order: `library` → the 10 `screensavers-*` → the 5 TUI apps. |
+| `scripts/compile-local-development.ps1` | Builds every repo in dependency order: `library` → the 10 `screensaver-*` → the 5 TUI apps. |
 | `scripts/build-all-apps.ps1` | Builds just the 5 TUI apps (`helm`, `pulse`, `scout`, `trance`, `ignite`). Useful when the library hasn't changed. |
 | `scripts/build-clean-cosmos.ps1` | One-off cleaner for the `cosmos` screensaver's source after a heavy refactor. |
 
@@ -29,14 +29,14 @@ No Rust code. No GitHub Actions. No CI. Every binary in the local76 ecosystem is
 
 | Script | What it does |
 |---|---|
-| `scripts/build-all-screensavers.sh` | Clones all 10 `screensavers-*` repos into a local cache and runs `cargo build --release` on each. |
+| `scripts/build-all-screensavers.sh` | Clones all 10 `screensaver-*` repos into a local cache and runs `cargo build --release` on each. |
 
 #### Packaging (PowerShell + Bash)
 
 | Script | What it does |
 |---|---|
-| `scripts/build-all-screensavers-linux-packages.ps1` | Builds DEB packages for all 10 screensavers via the per-scene shell script below. |
-| `scripts/build-screensavers-deb-packages.sh` | Builds `.deb` packages for all 10 screensavers via `cargo deb`. |
+| `scripts/build-all-screensaver-linux-packages.ps1` | Builds DEB packages for all 10 screensavers via the per-scene shell script below. |
+| `scripts/build-screensaver-deb-packages.sh` | Builds `.deb` packages for all 10 screensavers via `cargo deb`. |
 
 #### Release automation (PowerShell)
 
@@ -51,7 +51,7 @@ These scripts were used to do the 4.0→4.2 migration of the screensavers (split
 
 | Script | What it does |
 |---|---|
-| `scripts/migrate-winres.ps1` | One-time migration of a screensavers-* repo from the legacy `winres 0.1` build pipeline to the 4.2 `embed-resource 2.x` + `library::core::build_resources::write_brand_rc` + `library::screensaver_shim!` pipeline. |
+| `scripts/migrate-winres.ps1` | One-time migration of a screensaver-* repo from the legacy `winres 0.1` build pipeline to the 4.2 `embed-resource 2.x` + `library::core::build_resources::write_brand_rc` + `library::screensaver_shim!` pipeline. |
 | `scripts/flatten-scenes.ps1` | Collapsed a 4-file scene subdir (`<scene>/{mod.rs, scene.rs, traits.rs, render.rs}`) into a single `<scene>.rs` per the 4.2 layout. |
 | `scripts/flatten-complex-scenes.ps1` | Same as above, for the heavy `bounce.rs` and `cosmos.rs` scenes. |
 | `scripts/flatten-complex-proper.ps1` | Cleanup pass after `flatten-complex-scenes.ps1` to fix use-statement grouping. |
@@ -86,7 +86,7 @@ pwsh ./toolkit/scripts/build-all-apps.ps1
 pwsh ./toolkit/scripts/compile-local-development.ps1 -SkipLibrary -SkipScreensavers -App helm
 
 # Build DEB packages for all screensavers (Linux)
-pwsh ./toolkit/scripts/build-all-screensavers-linux-packages.ps1
+pwsh ./toolkit/scripts/build-all-screensaver-linux-packages.ps1
 
 # Cut a release
 pwsh ./toolkit/scripts/publish-app-release.ps1 -App helm -Version 2026.6.9
@@ -106,15 +106,15 @@ toolkit/
     ├── compile-local-development.ps1
     ├── build-all-apps.ps1
     ├── build-clean-cosmos.ps1
-    ├── build-all-screensavers-linux-packages.ps1
+    ├── build-all-screensaver-linux-packages.ps1
     ├── build-all-screensavers.sh
-    ├── build-screensavers-deb-packages.sh
+    ├── build-screensaver-deb-packages.sh
     ├── publish-app-release.ps1
     ├── push-uniform-git-tag.ps1
     └── archive/                              # 18 historical migration/audit scripts
 ```
 
-DEB packaging is done via `cargo deb` reading `[package.metadata.deb]` from each `screensavers-*` `Cargo.toml`. The `.desktop` entries live in each app's `assets/` directory.
+DEB packaging is done via `cargo deb` reading `[package.metadata.deb]` from each `screensaver-*` `Cargo.toml`. The `.desktop` entries live in each app's `assets/` directory.
 
 ---
 

@@ -42,9 +42,9 @@ if (-not $SkipLibrary) {
 # 2. screensavers (10 effect binaries — depend on library)
 if (-not $SkipScreensavers) {
     foreach ($s in $screens) {
-        $path = Join-Path $monorepoRoot "screensavers-$s"
+        $path = Join-Path $monorepoRoot "screensaver-$s"
         if (Test-Path $path) {
-            Build-One $path "screensavers-$s"
+            Build-One $path "screensaver-$s"
         }
     }
 }
@@ -89,7 +89,7 @@ if ($OutputDir) {
     # Copy screensavers
     if (-not $SkipScreensavers) {
         foreach ($s in $screens) {
-            $path = Join-Path $monorepoRoot "screensavers-$s"
+            $path = Join-Path $monorepoRoot "screensaver-$s"
             $exePath = Join-Path $path "target\release\$s.exe"
             if (Test-Path $exePath) {
                 Copy-Item -Path $exePath -Destination (Join-Path $screensaverDist "$s.exe") -Force
