@@ -7,7 +7,8 @@ param(
     [switch]$SkipLibrary = $false,
     [switch]$SkipScreensavers = $false,
     [switch]$SkipApps = $false,
-    [switch]$Release = $true
+    [switch]$Release = $true,
+    [string]$OutputDir = "C:\Users\jeryd\Downloads\dist"
 )
 
 $ErrorActionPreference = "Stop"
@@ -57,6 +58,44 @@ if (-not $SkipApps) {
         }
         if (Test-Path $path) {
             Build-One $path "app-$a"
+        }
+    }
+}
+
+# 4. Copy to organized OutputDir if specified
+if ($OutputDir) {
+    $appDist = Join-Path $OutputDir "app"
+    $screensaverDist = Join-Path $OutputDir "screensaver"
+    
+    # Create target directories
+    New-Item -ItemType Directory -Force -Path $appDist | Out-Null
+    New-Item -ItemType Directory -Force -Path $screensaverDist | Out-Null
+    
+    # Copy apps
+    if (-not $SkipApps) {
+        foreach ($a in $apps) {
+            $path = Join-Path $monorepoRoot "app-$a"
+            if (-not (Test-Path $path)) {
+                $path = Join-Path $monorepoRoot $a
+            }
+            $exePath = Join-Path $path "target\release\$a.exe"
+            if (Test-Path $exePath) {
+                Copy-Item -Path $exePath -Destination (Join-Path $appDist "$a.exe") -Force
+                Write-Host "Copied $a.exe to $appDist" -ForegroundColor Green
+            }
+        }
+    }
+    
+    # Copy screensavers
+    if (-not $SkipScreensavers) {
+        foreach ($s in $screens) {
+            $path = Join-Path $monorepoRoot "screensavers-$s"
+            $exePath = Join-Path $path "target\release\$s.exe"
+            if (Test-Path $exePath) {
+                Copy-Item -Path $exePath -Destination (Join-Path $screensaverDist "$s.exe") -Force
+                Copy-Item -Path $exePath -Destination (Join-Path $screensaverDist "$s.scr") -Force
+                Write-Host "Copied $s.exe and $s.scr to $screensaverDist" -ForegroundColor Green
+            }
         }
     }
 }

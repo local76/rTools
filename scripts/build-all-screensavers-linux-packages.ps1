@@ -1,77 +1,67 @@
 $ErrorActionPreference = "Stop"
 
-# Builds DEB and RPM packages for all 10 screensavers, cloning each
-# screensavers-<scene> repo from github.com/local76 into a local cache.
-# Output goes to <repo-cache>/dist/packages/.
+# Builds DEB packages for all 10 screensavers and 5 apps from local monorepo checkouts.
+# Output goes to <monorepoRoot>/dist/packages/.
 
-$repoCache = $env:SCREENSAVERS_REPO_CACHE
-if (-not $repoCache) {
-    $repoCache = Join-Path $PSScriptRoot "..\..\.cache\screensavers"
-    $repoCache = (Resolve-Path -LiteralPath (Split-Path $repoCache -Parent) -ErrorAction SilentlyContinue).Path
-    if (-not $repoCache) {
-        $repoCache = "$PSScriptRoot\..\..\.cache\screensavers"
-    }
-}
-$repoCache = (Resolve-Path -LiteralPath $repoCache -ErrorAction SilentlyContinue).Path
-if (-not $repoCache) {
-    $repoCache = "$PSScriptRoot\..\..\.cache\screensavers"
-}
+$monorepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
+$outputDir = Join-Path $monorepoRoot "dist\packages"
 
-if (-not (Test-Path -LiteralPath $repoCache)) {
-    New-Item -ItemType Directory -Path $repoCache -Force | Out-Null
-}
-
-$outputDir = Join-Path $repoCache "dist\packages"
 if (-not (Test-Path -LiteralPath $outputDir)) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 }
 
 $screensavers = @('beams', 'bounce', 'flame', 'gnats', 'bursts', 'cosmos', 'glyphs', 'disco', 'storm', 'chaos')
+$apps = @('helm', 'pulse', 'scout', 'trance', 'ignite')
 
-function Get-RepoDir([string]$saver) {
-    $dir = Join-Path $repoCache "screensavers-$saver"
-    if (-not (Test-Path -LiteralPath "$dir\.git")) {
-        if (Test-Path -LiteralPath $dir) {
-            Remove-Item -LiteralPath $dir -Recurse -Force
+Write-Host "==========================================" -ForegroundColor Green
+Write-Host "Building All local76 DEB Packages Locally" -ForegroundColor Green
+Write-Host "Output Directory: $outputDir" -ForegroundColor Green
+Write-Host "==========================================" -ForegroundColor Green
+
+Write-Host ""
+Write-Host "1. Building Screensaver DEB Packages in Parallel..." -ForegroundColor Cyan
+$screensavers | ForEach-Object -ThrottleLimit 4 -Parallel {
+    $saver = $_
+    $outputDir = $using:outputDir
+    $monorepoRoot = $using:monorepoRoot
+
+    $dir = Join-Path $monorepoRoot "screensavers-$saver"
+    if (Test-Path $dir) {
+        Write-Host "-> Building DEB for screensavers-$saver..." -ForegroundColor Gray
+        $process = Start-Process -FilePath "cargo" -ArgumentList "deb", "-o", $outputDir -WorkingDirectory $dir -NoNewWindow -PassThru -Wait
+        if ($process.ExitCode -ne 0) {
+            Write-Error "Failed to build DEB package for screensavers-$saver (Exit Code: $($process.ExitCode))"
+        } else {
+            Write-Host "-> Completed DEB for screensavers-$saver!" -ForegroundColor Green
         }
-        git clone "https://github.com/local76/screensavers-$saver.git" "$dir"
-    }
-    return $dir
-}
-
-Write-Host "==========================================" -ForegroundColor Green
-Write-Host "Building All Linux Packages (DEB & RPM) via Cargo Tools" -ForegroundColor Green
-Write-Host "Cache: $repoCache" -ForegroundColor Green
-Write-Host "==========================================" -ForegroundColor Green
-
-Write-Host ""
-Write-Host "1. Building DEB Packages..." -ForegroundColor Cyan
-foreach ($saver in $screensavers) {
-    Write-Host "-> Building DEB for $saver..." -ForegroundColor Gray
-    $dir = Get-RepoDir $saver
-    Push-Location $dir
-    try {
-        cargo deb -o "$outputDir"
-    } finally {
-        Pop-Location
     }
 }
 
 Write-Host ""
-Write-Host "2. Building RPM Packages..." -ForegroundColor Cyan
-foreach ($saver in $screensavers) {
-    Write-Host "-> Building RPM for $saver..." -ForegroundColor Gray
-    $dir = Get-RepoDir $saver
-    Push-Location $dir
-    try {
-        cargo generate-rpm -o "$outputDir"
-    } finally {
-        Pop-Location
+Write-Host "2. Building Application DEB Packages in Parallel..." -ForegroundColor Cyan
+$apps | ForEach-Object -ThrottleLimit 3 -Parallel {
+    $app = $_
+    $outputDir = $using:outputDir
+    $monorepoRoot = $using:monorepoRoot
+
+    $dir = Join-Path $monorepoRoot "app-$app"
+    if (-not (Test-Path $dir)) {
+        $dir = Join-Path $monorepoRoot $app
+    }
+
+    if (Test-Path $dir) {
+        Write-Host "-> Building DEB for app-$app..." -ForegroundColor Gray
+        $process = Start-Process -FilePath "cargo" -ArgumentList "deb", "-o", $outputDir -WorkingDirectory $dir -NoNewWindow -PassThru -Wait
+        if ($process.ExitCode -ne 0) {
+            Write-Error "Failed to build DEB package for app-$app (Exit Code: $($process.ExitCode))"
+        } else {
+            Write-Host "-> Completed DEB for app-$app!" -ForegroundColor Green
+        }
     }
 }
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
-Write-Host "Linux packaging build complete!" -ForegroundColor Green
+Write-Host "DEB packaging build complete!" -ForegroundColor Green
 Write-Host "Packages in: $outputDir" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green

@@ -60,6 +60,15 @@ foreach ($a in $targets) {
         Copy-Item -Path "target\release\$a.exe" -Destination $binDir -Force -ErrorAction SilentlyContinue
         Copy-Item -Path "target\release\$a" -Destination $binDir -Force -ErrorAction SilentlyContinue
 
+        # Build debian package if cargo-deb is available
+        if (Get-Command cargo-deb -ErrorAction SilentlyContinue) {
+            Write-Host "Building DEB package..." -ForegroundColor Yellow
+            cargo deb
+            if ($LASTEXITCODE -eq 0) {
+                Copy-Item -Path "target/debian/*.deb" -Destination $binDir -Force -ErrorAction SilentlyContinue
+            }
+        }
+
         # For screensavers, also copy .scr files
         $isScreensaver = ($a -eq "screensavers" -or $a -in @('beams', 'bounce', 'bursts', 'chaos', 'cosmos', 'disco', 'flame', 'glyphs', 'gnats', 'storm'))
         if ($isScreensaver) {

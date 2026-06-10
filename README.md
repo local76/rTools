@@ -35,11 +35,8 @@ No Rust code. No GitHub Actions. No CI. Every binary in the local76 ecosystem is
 
 | Script | What it does |
 |---|---|
-| `scripts/build-all-screensavers-linux-packages.ps1` | Builds DEB + RPM packages for all 10 screensavers via the per-scene shell scripts below. |
+| `scripts/build-all-screensavers-linux-packages.ps1` | Builds DEB packages for all 10 screensavers via the per-scene shell script below. |
 | `scripts/build-screensavers-deb-packages.sh` | Builds `.deb` packages for all 10 screensavers via `cargo deb`. |
-| `scripts/build-screensavers-rpm-packages.sh` | Builds `.rpm` packages for all 10 screensavers via `cargo generate-rpm`. |
-| `scripts/build-msi-installer.ps1` | Compiles a Windows MSI installer for an app using cargo-wix and the WiX Toolset. |
-| `scripts/generate-winget-manifest.ps1` | Generates a singleton YAML manifest for submitting the app to the Windows Package Manager (WinGet). |
 
 #### Release automation (PowerShell)
 
@@ -88,13 +85,7 @@ pwsh ./toolkit/scripts/build-all-apps.ps1
 # Build a single app locally
 pwsh ./toolkit/scripts/compile-local-development.ps1 -SkipLibrary -SkipScreensavers -App helm
 
-# Package Windows MSI installer
-pwsh ./toolkit/scripts/build-msi-installer.ps1 -App helm -Version 2026.6.9
-
-# Generate WinGet manifest for MSI
-pwsh ./toolkit/scripts/generate-winget-manifest.ps1 -App helm -Version 2026.6.9 -MsiPath ./helm/dist/binaries/helm_v2026.6.9_x64.msi
-
-# Build DEB + RPM for all screensavers (Linux)
+# Build DEB packages for all screensavers (Linux)
 pwsh ./toolkit/scripts/build-all-screensavers-linux-packages.ps1
 
 # Cut a release
@@ -111,10 +102,6 @@ toolkit/
 ├── LICENSE.md
 ├── build-all-local.ps1                       # Root quick-build helper
 ├── tag-each-repo-with-crate-version.ps1      # Root version tag helper
-├── packaging/
-│   └── wix/                                  # WiX configuration templates
-│       ├── build-msi.ps1
-│       └── template.wxs
 └── scripts/                                  # See Scripts table above
     ├── compile-local-development.ps1
     ├── build-all-apps.ps1
@@ -122,17 +109,12 @@ toolkit/
     ├── build-all-screensavers-linux-packages.ps1
     ├── build-all-screensavers.sh
     ├── build-screensavers-deb-packages.sh
-    ├── build-screensavers-rpm-packages.sh
-    ├── build-msi-installer.ps1
-    ├── generate-winget-manifest.ps1
     ├── publish-app-release.ps1
     ├── push-uniform-git-tag.ps1
-    ├── verify-icon.ps1
-    ├── reencode-icos.ps1
-    └── (24 other historical migration / audit scripts — see Scripts table)
+    └── archive/                              # 18 historical migration/audit scripts
 ```
 
-`packaging/` is intentionally sparse. The `wix/` subdirectory holds the WiX templates for MSI builds. The DEB/RPM packaging is done via `cargo deb` and `cargo generate-rpm` reading `[package.metadata.deb]` and `[package.metadata.generate-rpm]` from each `screensavers-*` `Cargo.toml`. The `.desktop` entries live in each app's `assets/` directory.
+DEB packaging is done via `cargo deb` reading `[package.metadata.deb]` from each `screensavers-*` `Cargo.toml`. The `.desktop` entries live in each app's `assets/` directory.
 
 ---
 
