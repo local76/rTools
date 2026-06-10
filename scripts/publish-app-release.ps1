@@ -57,8 +57,20 @@ foreach ($a in $targets) {
         $distDir = Join-Path $appPath "dist"
         $binDir = Join-Path $distDir "binaries"
         New-Item -ItemType Directory -Force -Path $binDir | Out-Null
-        Copy-Item -Path "target\release\$a.exe" -Destination $binDir -Force -ErrorAction SilentlyContinue
-        Copy-Item -Path "target\release\$a" -Destination $binDir -Force -ErrorAction SilentlyContinue
+
+        $isScreensaver = ($a -eq "screensavers" -or $a -in @('beams', 'bounce', 'bursts', 'chaos', 'cosmos', 'disco', 'flame', 'glyphs', 'gnats', 'storm'))
+        if ($isScreensaver) {
+            # On Windows, screensavers are .scr only. On Linux, they are extensionless binary executables.
+            if (Test-Path "target\release\$a.exe") {
+                Copy-Item -Path "target\release\$a.exe" -Destination (Join-Path $binDir "$a.scr") -Force
+            }
+            if (Test-Path "target\release\$a") {
+                Copy-Item -Path "target\release\$a" -Destination (Join-Path $binDir "$a") -Force
+            }
+        } else {
+            Copy-Item -Path "target\release\$a.exe" -Destination $binDir -Force -ErrorAction SilentlyContinue
+            Copy-Item -Path "target\release\$a" -Destination $binDir -Force -ErrorAction SilentlyContinue
+        }
 
         # Build debian package if cargo-deb is available
         if (Get-Command cargo-deb -ErrorAction SilentlyContinue) {
@@ -66,15 +78,6 @@ foreach ($a in $targets) {
             cargo deb
             if ($LASTEXITCODE -eq 0) {
                 Copy-Item -Path "target/debian/*.deb" -Destination $binDir -Force -ErrorAction SilentlyContinue
-            }
-        }
-
-        # For screensavers, also copy .scr files
-        $isScreensaver = ($a -eq "screensavers" -or $a -in @('beams', 'bounce', 'bursts', 'chaos', 'cosmos', 'disco', 'flame', 'glyphs', 'gnats', 'storm'))
-        if ($isScreensaver) {
-            Get-ChildItem -Path "target\release" -Filter "*.exe" | ForEach-Object {
-                $base = $_.BaseName
-                Copy-Item -Path $_.FullName -Destination (Join-Path $binDir "$base.scr") -Force
             }
         }
 

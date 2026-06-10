@@ -92,9 +92,8 @@ if ($OutputDir) {
             $path = Join-Path $monorepoRoot "screensaver-$s"
             $exePath = Join-Path $path "target\release\$s.exe"
             if (Test-Path $exePath) {
-                Copy-Item -Path $exePath -Destination (Join-Path $screensaverDist "$s.exe") -Force
                 Copy-Item -Path $exePath -Destination (Join-Path $screensaverDist "$s.scr") -Force
-                Write-Host "Copied $s.exe and $s.scr to $screensaverDist" -ForegroundColor Green
+                Write-Host "Copied $s.scr to $screensaverDist" -ForegroundColor Green
             }
         }
     }
