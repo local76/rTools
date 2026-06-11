@@ -8,7 +8,12 @@ param(
     [switch]$SkipScreensavers = $false,
     [switch]$SkipApps = $false,
     [switch]$Release = $true,
-    [string]$OutputDir = "C:\Users\jeryd\Downloads\dist"
+    # Fix for I24: default to a relative path under the script's own root so
+    # the script works on any machine (CI, other devs, fresh clones). Callers
+    # can still override with -OutputDir. The previous default was a hardcoded
+    # path under a specific user's profile, which silently wrote to that path
+    # on every other machine.
+    [string]$OutputDir = "./dist"
 )
 
 $ErrorActionPreference = "Stop"
