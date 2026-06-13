@@ -9,6 +9,15 @@ below). The toolkit is the devops layer.
 
 ---
 
+## First-Principles DevOps Guidelines
+
+Maximize operational self-containment and build portability by adhering to the following toolkit guidelines:
+- **Zero External Pipelines**: Rely entirely on local execution; avoid external cloud CI/CD pipelines (e.g., GitHub Actions) to guarantee build privacy and independence.
+- **Standardized Cross-Platform Scripts**: Utilize native PowerShell Core (`.ps1`) as the single scripting runtime across Windows and Linux, eliminating dependencies on secondary scripting environments like Python or Bash.
+- **No Centralized Credentials**: Ensure releases are signed and authenticated locally using developer keys, preventing dependency on cloud secrets managers.
+
+---
+
 ## Scripts
 
 ### Top-level helpers (run from `toolkit/`)
