@@ -14,7 +14,7 @@ mkdir -p "$REPO_CACHE"
 OUTPUT_DIR="$REPO_CACHE/dist/packages"
 mkdir -p "$OUTPUT_DIR"
 
-SCREENSAVERS=(beams bounce flame gnats bursts cosmos glyphs disco storm chaos)
+SCREENSAVERS=(beams bounce flame gnats bursts cosmos glyphs disco storm chaos security tree)
 
 build_single_deb() {
     local saver="$1"

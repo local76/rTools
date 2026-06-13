@@ -10,7 +10,7 @@ if (-not (Test-Path -LiteralPath $outputDir)) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 }
 
-$screensavers = @('beams', 'bounce', 'flame', 'gnats', 'bursts', 'cosmos', 'glyphs', 'disco', 'storm', 'chaos')
+$screensavers = @('beams', 'bounce', 'flame', 'gnats', 'bursts', 'cosmos', 'glyphs', 'disco', 'storm', 'chaos', 'security', 'tree')
 $apps = @('helm', 'pulse', 'scout', 'trance', 'ignite')
 
 Write-Host "==========================================" -ForegroundColor Green
