@@ -10,6 +10,7 @@ PROJECTS=(
     "app-pulse"
     "app-scout"
     "app-trance"
+    "local76"
     "screensaver-beams"
     "screensaver-bounce"
     "screensaver-bursts"
@@ -32,10 +33,10 @@ if [ ! -d "$REPO_DIR/.git" ]; then
     exit 1
 fi
 
-APT_DIR="$REPO_DIR/apt"
+DEB_DIR="$REPO_DIR/deb"
 RPM_DIR="$REPO_DIR/rpm"
 
-mkdir -p "$APT_DIR/binary"
+mkdir -p "$DEB_DIR/binary"
 mkdir -p "$RPM_DIR"
 
 echo "=========================================="
@@ -53,7 +54,7 @@ for proj in "${PROJECTS[@]}"; do
         echo -e "\n------------------------------------------"
         echo "Building DEB for $proj..."
         echo "------------------------------------------"
-        (cd "$path" && cargo deb -o "$APT_DIR/binary")
+        (cd "$path" && cargo deb -o "$DEB_DIR/binary")
 
         echo -e "\n------------------------------------------"
         echo "Building RPM for $proj..."
@@ -69,9 +70,9 @@ for proj in "${PROJECTS[@]}"; do
 done
 
 echo -e "\n=========================================="
-echo "Generating APT Repository Indices..."
+echo "Generating Debian (DEB) Repository Indices..."
 echo "=========================================="
-cd "$APT_DIR"
+cd "$DEB_DIR"
 dpkg-scanpackages binary /dev/null > Packages
 gzip -fk Packages
 
@@ -117,6 +118,16 @@ else
     echo "Warning: Neither createrepo nor createrepo_c is installed. YUM index generation skipped."
 fi
 
+# Generate local76.repo file for DNF/YUM configuration
+cat <<EOF > local76.repo
+[local76]
+name=Local76 Software Repository
+baseurl=https://local76.github.io/packages/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://local76.github.io/packages/local76.gpg
+EOF
+
 # GPG Signing
 GPG_KEY=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -n 1 | awk '{print $2}' | cut -d'/' -f2 || true)
 if [ -n "$GPG_KEY" ]; then
@@ -124,8 +135,8 @@ if [ -n "$GPG_KEY" ]; then
     echo "Signing repositories with GPG Key: $GPG_KEY"
     echo "=========================================="
     
-    # Sign APT Repo
-    cd "$APT_DIR"
+    # Sign Debian Repo
+    cd "$DEB_DIR"
     gpg --default-key "$GPG_KEY" --clearsign -o InRelease Release
     gpg --default-key "$GPG_KEY" -abs -o Release.gpg Release
     
