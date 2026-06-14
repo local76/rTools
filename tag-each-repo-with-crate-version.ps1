@@ -5,7 +5,7 @@
 # v<version> tag, and pushes. Idempotent — safe to re-run.
 #
 # Repos covered:
-#   library, screensavers, helm, trance, pulse, ignite,
+#   library, screensavers, helm, pulse, ignite,
 #   scout, toolkit
 #
 # (The two umbrella repos apps + toolkit are versioned off their
@@ -17,7 +17,7 @@ $local76 = (Resolve-Path "$PSScriptRoot/../..").Path
 Write-Host "local76 root: $local76" -ForegroundColor Cyan
 
 $repos = @(
-    "library", "screensavers", "helm", "trance", "pulse",
+    "library", "screensavers", "helm", "pulse",
     "ignite", "scout", "toolkit"
 )
 

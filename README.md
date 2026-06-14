@@ -45,8 +45,8 @@ the full flow.
 
 | Script | What it does |
 |---|---|
-| `scripts/compile-local-development.ps1` | Builds every repo in dependency order: `library` → the 10 `screensaver-*` → the 5 apps. |
-| `scripts/build-all-apps.ps1` | Builds just the 5 apps (`helm`, `pulse`, `scout`, `trance`, `ignite`). Useful when the library hasn't changed. |
+| `scripts/compile-local-development.ps1` | Builds every repo in dependency order: `library` → the 10 `screensaver-*` → the 4 apps. |
+| `scripts/build-all-apps.ps1` | Builds just the 4 apps (`helm`, `pulse`, `scout`, `ignite`). Useful when the library hasn't changed. |
 | `scripts/build-clean-cosmos.ps1` | One-off cleaner for the `cosmos` screensaver's source after a heavy refactor. |
 
 #### Cross-platform builds (Bash)
@@ -160,7 +160,7 @@ on Windows, `~/Synology/Home/Projects/local76` on Linux):
 # Build everything locally
 pwsh ./toolkit/scripts/compile-local-development.ps1
 
-# Build just the 5 apps
+# Build just the 4 apps
 pwsh ./toolkit/scripts/build-all-apps.ps1
 
 # Build a single app locally

@@ -20,7 +20,7 @@ if (-not $Version) {
 
 $monorepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $apps = @(
-    "helm", "pulse", "scout", "trance", "ignite",
+    "helm", "pulse", "scout", "ignite",
     "beams", "bounce", "bursts", "chaos", "cosmos", "disco", "flame", "glyphs", "gnats", "storm",
     "screensavers"
 )

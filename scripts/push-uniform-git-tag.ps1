@@ -16,7 +16,6 @@ param(
         "app-helm",
         "app-pulse",
         "app-scout",
-        "app-trance",
         "app-ignite",
         "screensaver-beams",
         "screensaver-bounce",
@@ -94,7 +93,7 @@ function Push-Tag-One {
 foreach ($r in $Repos) {
     $path = Join-Path $monorepoRoot $r
     if (-not (Test-Path $path)) {
-        if ($r -match "^(helm|pulse|scout|trance|ignite)$") {
+        if ($r -match "^(helm|pulse|scout|ignite)$") {
             $path = Join-Path $monorepoRoot "app-$r"
         } elseif ($r -match "^(beams|bounce|bursts|chaos|cosmos|disco|flame|glyphs|gnats|storm)$") {
             $path = Join-Path $monorepoRoot "screensaver-$r"

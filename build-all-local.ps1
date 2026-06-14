@@ -9,7 +9,6 @@
 #   ├── library/   (the shared design system + 10 screensaver effects)
 #   ├── screensavers/   (the 10 standalone screensaver shim binaries)
 #   ├── helm/
-#   ├── trance/
 #   ├── pulse/
 #   ├── ignite/
 #   └── scout/
@@ -51,9 +50,8 @@ $buildArgs = @()
 if ($Release) {
     $buildArgs += "--release"
 }
-$apps = @("helm", "trance", "pulse", "ignite", "scout")
-$screens = @("beams", "bounce", "bursts", "chaos", "cosmos", "disco", "flame", "glyphs", "gnats", "storm")
-$total = ($apps.Count) + ($screens.Count) + 1  # +1 for library
+$apps = @("helm", "pulse", "ignite", "scout")
+$total = $apps.Count + 2  # library + screensavers workspace + apps
 $step = 0
 
 if (-not $SkipCommon) {
@@ -74,12 +72,10 @@ if (-not $SkipApps) {
 }
 
 if (-not $SkipScenes) {
-    foreach ($s in $screens) {
-        $step++
-        $script = { cargo build @buildArgs }
-        $sPath = "$local76/screensaver-$s"
-        Invoke-Step $step $total "screensaver-$s" $sPath $script
-    }
+    $step++
+    $script = { cargo build @buildArgs }
+    $sPath = "$local76/screensavers"
+    Invoke-Step $step $total "screensavers" $sPath $script
 }
 
 Write-Host "`nAll build processes completed successfully." -ForegroundColor Green

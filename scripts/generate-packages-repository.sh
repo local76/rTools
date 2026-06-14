@@ -9,7 +9,6 @@ PROJECTS=(
     "app-ignite"
     "app-pulse"
     "app-scout"
-    "app-trance"
     "local76"
     "screensaver-beams"
     "screensaver-bounce"

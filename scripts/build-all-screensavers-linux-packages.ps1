@@ -11,7 +11,7 @@ if (-not (Test-Path -LiteralPath $outputDir)) {
 }
 
 $screensavers = @('beams', 'bounce', 'flame', 'gnats', 'bursts', 'cosmos', 'glyphs', 'disco', 'storm', 'chaos', 'security', 'tree')
-$apps = @('helm', 'pulse', 'scout', 'trance', 'ignite')
+$apps = @('helm', 'pulse', 'scout', 'ignite')
 
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host "Building All local76 DEB Packages Locally" -ForegroundColor Green
@@ -25,14 +25,14 @@ $screensavers | ForEach-Object -ThrottleLimit 4 -Parallel {
     $outputDir = $using:outputDir
     $monorepoRoot = $using:monorepoRoot
 
-    $dir = Join-Path $monorepoRoot "screensaver-$saver"
+    $dir = Join-Path $monorepoRoot "screensavers/$saver"
     if (Test-Path $dir) {
-        Write-Host "-> Building DEB for screensaver-$saver..." -ForegroundColor Gray
+        Write-Host "-> Building DEB for $saver..." -ForegroundColor Gray
         $process = Start-Process -FilePath "cargo" -ArgumentList "deb", "-o", $outputDir -WorkingDirectory $dir -NoNewWindow -PassThru -Wait
         if ($process.ExitCode -ne 0) {
-            Write-Error "Failed to build DEB package for screensaver-$saver (Exit Code: $($process.ExitCode))"
+            Write-Error "Failed to build DEB package for $saver (Exit Code: $($process.ExitCode))"
         } else {
-            Write-Host "-> Completed DEB for screensaver-$saver!" -ForegroundColor Green
+            Write-Host "-> Completed DEB for $saver!" -ForegroundColor Green
         }
     }
 }

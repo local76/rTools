@@ -29,7 +29,7 @@ function Pass($msg) {
 Write-Host "=== cargo dep pin verification ===" -ForegroundColor Cyan
 
 $repos = @(
-    "app-helm", "app-pulse", "app-scout", "app-trance", "app-ignite",
+    "app-helm", "app-pulse", "app-scout", "app-ignite",
     "screensaver-beams", "screensaver-bounce", "screensaver-bursts",
     "screensaver-chaos", "screensaver-cosmos", "screensaver-disco",
     "screensaver-flame", "screensaver-glyphs", "screensaver-gnats",

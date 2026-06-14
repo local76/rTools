@@ -3,7 +3,6 @@
 PROJECTS=(
     "library"
     "app-helm"
-    "app-trance"
     "app-pulse"
     "app-ignite"
     "app-scout"

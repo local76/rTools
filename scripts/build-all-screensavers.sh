@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds all 10 screensavers, cloning each screensavers-<scene> repo from
+# Builds all screensavers, cloning the single unified screensavers repo from
 # github.com/local76 into a local cache. Output goes to <repo-cache>/dist/binaries/.
 
 set -e
@@ -13,29 +13,25 @@ mkdir -p "$REPO_CACHE"
 OUTPUT_DIR="$REPO_CACHE/dist/binaries"
 mkdir -p "$OUTPUT_DIR"
 
-SCREENSAVERS=(beams bounce flame gnats bursts cosmos glyphs disco storm chaos)
-
-get_repo_dir() {
-    local saver="$1"
-    local dir="$REPO_CACHE/screensavers-$saver"
-    if [ ! -d "$dir/.git" ]; then
-        rm -rf "$dir"
-        git clone "https://github.com/local76/screensavers-$saver.git" "$dir"
-    fi
-    echo "$dir"
-}
+SCREENSAVERS_DIR="$REPO_CACHE/screensavers"
+if [ ! -d "$SCREENSAVERS_DIR/.git" ]; then
+    rm -rf "$SCREENSAVERS_DIR"
+    git clone "https://github.com/local76/screensavers.git" "$SCREENSAVERS_DIR"
+else
+    (cd "$SCREENSAVERS_DIR" && git pull)
+fi
 
 echo "=========================================="
 echo "Building All Screensavers (Windows .exe/.scr via cargo)"
 echo "Cache: $REPO_CACHE"
 echo "=========================================="
 
+(cd "$SCREENSAVERS_DIR" && cargo build --release)
+
+SCREENSAVERS=(beams bounce bursts chaos cosmos disco flame glyphs gnats security storm tree)
 for saver in "${SCREENSAVERS[@]}"; do
-    echo "-> Building $saver..."
-    dir=$(get_repo_dir "$saver")
-    (cd "$dir" && cargo build --release)
-    if [ -f "$dir/target/release/${saver}.exe" ]; then
-        cp "$dir/target/release/${saver}.exe" "$OUTPUT_DIR/"
+    if [ -f "$SCREENSAVERS_DIR/target/release/${saver}.exe" ]; then
+        cp "$SCREENSAVERS_DIR/target/release/${saver}.exe" "$OUTPUT_DIR/"
     fi
 done
 

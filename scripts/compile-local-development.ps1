@@ -22,8 +22,8 @@ $buildFlag = if ($Release) { "--release" } else { "" }
 # toolkit/ lives at <monorepo>/toolkit. The sibling repos are in the same monorepo root.
 $monorepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $libPath    = Join-Path $monorepoRoot "library"
-$apps = @("helm", "pulse", "scout", "trance", "ignite")
-$screens = @("beams", "bounce", "bursts", "chaos", "cosmos", "disco", "flame", "glyphs", "gnats", "storm")
+$apps = @("helm", "pulse", "scout", "ignite")
+$screens = @("beams", "bounce", "bursts", "chaos", "cosmos", "disco", "flame", "glyphs", "gnats", "security", "storm", "tree")
 
 function Build-One {
     param([string]$Path, [string]$Name)
@@ -44,13 +44,11 @@ if (-not $SkipLibrary) {
     Build-One $libPath "library"
 }
 
-# 2. screensavers (10 effect binaries — depend on library)
+# 2. screensavers (12 effect binaries — unified workspace)
 if (-not $SkipScreensavers) {
-    foreach ($s in $screens) {
-        $path = Join-Path $monorepoRoot "screensaver-$s"
-        if (Test-Path $path) {
-            Build-One $path "screensaver-$s"
-        }
+    $path = Join-Path $monorepoRoot "screensavers"
+    if (Test-Path $path) {
+        Build-One $path "screensavers"
     }
 }
 
@@ -93,9 +91,12 @@ if ($OutputDir) {
     
     # Copy screensavers
     if (-not $SkipScreensavers) {
+        $screensWorkspace = Join-Path $monorepoRoot "screensavers"
         foreach ($s in $screens) {
-            $path = Join-Path $monorepoRoot "screensaver-$s"
-            $exePath = Join-Path $path "target\release\$s.exe"
+            $exePath = Join-Path $screensWorkspace "target\release\$s.exe"
+            if (-not (Test-Path $exePath)) {
+                $exePath = Join-Path $monorepoRoot "screensaver-$s\target\release\$s.exe"
+            }
             if (Test-Path $exePath) {
                 Copy-Item -Path $exePath -Destination (Join-Path $screensaverDist "$s.scr") -Force
                 Write-Host "Copied $s.scr to $screensaverDist" -ForegroundColor Green
